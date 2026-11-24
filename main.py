@@ -14,14 +14,23 @@ FORTUNE = (
 
 OUTPUT_PATH = Path("/output/entry.txt")
 
+MAX_CHARS = 120
+
 
 def main() -> None:
+    if not FORTUNE.strip():
+        raise ValueError("fortune must not be empty or whitespace-only")
+    if len(FORTUNE) > MAX_CHARS:
+        raise ValueError(
+            f"fortune must be at most {MAX_CHARS} characters, "
+            f"got {len(FORTUNE)}"
+        )
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(FORTUNE, encoding="utf-8")
     round_trip = OUTPUT_PATH.read_text(encoding="utf-8")
     assert round_trip == FORTUNE, "round-trip mismatch"
-    assert 1 <= len(round_trip) <= 120, (
-        f"entry must be 1-120 characters, got {len(round_trip)}"
+    assert 1 <= len(round_trip) <= MAX_CHARS, (
+        f"entry must be 1-{MAX_CHARS} characters, got {len(round_trip)}"
     )
     assert round_trip.strip() == FORTUNE, "entry must not be only whitespace"
 
